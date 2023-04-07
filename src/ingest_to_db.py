@@ -21,9 +21,6 @@ for file in os.listdir(data_folder):
     # Open the text file
     with open(os.path.join(data_folder, file), 'r') as f:
 
-        # Create a session for interacting with the database
-        session = Session()
-
         # Loop over each line in the text file
         for line in f:
 
