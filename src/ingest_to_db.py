@@ -46,3 +46,6 @@ for file in os.listdir(data_folder):
 
         # Close the session
         session.close()
+
+
+# Replace missing values -9999 to NULL

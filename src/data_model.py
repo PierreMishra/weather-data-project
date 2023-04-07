@@ -14,7 +14,7 @@ class WeatherData(Base):
     # Define columns and data types
     id = Column(Integer, primary_key=True)
     date = Column(Date, nullable=False)
-    station = Column(String(50), nullable=False)
+    station = Column(String(20), nullable=False)
     max_temp = Column(Float)
     min_temp = Column(Float)
     precipitation = Column(Float)
