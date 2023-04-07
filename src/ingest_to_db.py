@@ -5,6 +5,7 @@ import os                                  #to interact with local files
 from datetime import datetime              #to work with datetime type
 from functions import create_db_connection
 import pandas as pd
+from data_model import WeatherData
 
 # Configure connection to our SQLite weather database
 session = create_db_connection('sqlite:///database/weather.db')
@@ -31,12 +32,14 @@ for file in os.listdir(data_folder):
             min_temp = float(fields[2])
             precipitation = float(fields[3])
 
-            # Create a WeatherData object for the row of data
-            data = WeatherData(date=date, station=station, max_temp=max_temp,
-                               min_temp=min_temp, precipitation=precipitation)
+            # Check if a record with the same station name and date already exists in the database
+            existing_data = session.query(WeatherData).filter_by(station=station, date=date).first()
 
-            # Add the WeatherData object to the session
-            session.add(data)
+            # If the record does not exist, create a new WeatherData object and add it to the session
+            if not existing_data:
+                data = WeatherData(date=date, station=station, max_temp=max_temp,
+                                   min_temp=min_temp, precipitation=precipitation)
+                session.add(data)
 
         # Commit the changes to the database
         session.commit()

@@ -5,4 +5,3 @@ venv/
 .vim/
 .vscode/
 .mypy_cache/
-database/
