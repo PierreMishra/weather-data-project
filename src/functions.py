@@ -59,10 +59,11 @@ def parse_url_response(url):
 #     address = location.raw['address'] #from dictiionary get various address components
 #     state = address.get('state', '')
 #     return state
-def find_state(df['latitude'], df['longitude']):
+
+def find_state(pd_series_latitude, pd_series_longitude):
 
     # Create a list of tuples for the lat-lon pairs
-    coordinates = list(zip(new_stations['lat'], new_stations['lon']))
+    coordinates = list(zip(pd_series_latitude, pd_series_longitude))
 
     # Perform reverse geocoding
     results = rg.search(coordinates)

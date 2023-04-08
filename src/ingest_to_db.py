@@ -32,6 +32,7 @@ for s in stations_txt:
 # Get station attributes of new stations (!!! Takes 1-2 minutes !!!)
 if nasa_request == True:
     
+    # Obtain a list of all weather stations
     url = 'https://data.giss.nasa.gov/gistemp/station_data_v4/station_list.txt'
     all_stations = parse_url_response(url) #get all station list
     us_stations = all_stations[all_stations['station_id'].str.startswith('USC')] #keep US stations
@@ -40,58 +41,17 @@ if nasa_request == True:
     new_stations = us_stations[~us_stations['station_id'].isin(stations_db) & us_stations['station_id'].isin(stations_txt)]
 
     # Get state for each station
-    new_stations['state'] = new_stations.apply(lambda x: find_state(x['lat'], x['lon']), axis=1) #rowwise
+    new_stations.loc[:, 'state'] = find_state(new_stations['lat'], new_stations['lon'])
 
-# Create a list of tuples for the lat-lon pairs
-coordinates = list(zip(new_stations['lat'], new_stations['lon']))
-
-# Perform reverse geocoding
-results = rg.search(coordinates)
-
-# Extract state names from the results
-states = [r['admin1'] for r in results]
-
-# Add the state names as a new column in the DataFrame
-new_stations['state'] = states
-
-# Example coordinates
-coordinates = (new_stations['lat'], new_stations['lon'])
-
-# Perform reverse geocoding
-result = rg.search(coordinates)
-
-# Extract state name from the result
-state = result[0]['admin1']
-
-rg.search((x['lat'], x['long']))[0]['admin1']
-
-find_state(40.0028, -86.8011)
+# Push new stations to the station dimension table
 
 
 
-# Example coordinates
-coordinates = (38.897675, -77.036547)
-
-# Perform reverse geocoding
-result = rg.search(coordinates, mode=3)
-
-# Extract state name from the result
-state = result[0]['admin1']
-
-print(state)
-
-abc = new_stations.head(5).copy().reset_index()
-abc['state'] = abc.apply(lambda x: rg.search((x['lat'], x['lon'],))[0]['admin1'], axis=1)
 
 
-for index, x in abc.iterrows():
-    abc.loc[index, 'state'] = rg.search((x['lat'], x['lon'],))[0]['admin1']
 
 
-    url = 'https://data.giss.nasa.gov/gistemp/station_data_v4/station_list.txt'
-    response = requests.get(url) #send http get request to the URL
-    data = response.content.decode('utf-8') #decode the response object
-    station_list = pd.read_csv(io.StringIO(data)) #store in a dataframe
+
 
 # Split the string by whitespace and create new columns
 station_list = station_list.rename(columns={station_list.columns[0]: 'column'}) #remove unparsed column name
