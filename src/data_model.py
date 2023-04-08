@@ -12,8 +12,8 @@ class WeatherStation(Base):
     __tablename__ = 'dim_weather_station'
 
     # Define columns and data types
-    id = Column(Integer, autoincrement=True, nullable=False)
-    station_id = Column(String(20), primary_key=True, nullable=False)
+    id = Column(Integer, autoincrement=True, primary_key=True, nullable=False)
+    station_id = Column(String(20), nullable=False)
     station_name = Column(String(50))
     state = Column(String(12))
 
