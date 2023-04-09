@@ -5,10 +5,16 @@ import os                                  #to interact with local files
 from datetime import datetime              #to work with datetime type
 import pandas as pd
 import glob #may need to remove because i can do same stuff in os library
-from data_model import WeatherStation, Date, WeatherData
+from data_model import WeatherStation, RecordDate, WeatherData
 from functions import create_db_connection, create_reference_station_table, update_dimensions
 import sqlite3 #to directly connect to database (used for creating reference stations list table)
 from sqlalchemy.exc import SQLAlchemyError #to catch db errors
+from sqlalchemy import select, join #to run sqlalchemy core
+
+'''
+Add details later
+I was interested in finding which meters belong to which states. That is why I obtained
+'''
 
 # Configure connection to SQLite weather database
 session = create_db_connection('sqlite:///database/weather.db')
@@ -64,16 +70,173 @@ dates_df['month'] = dates_df['date_alternate'].dt.month
 dates_df['year'] = dates_df['date_alternate'].dt.year
 
 # Retrieve date id already stored in the dim_dates table in db
-dates_db = [r.date_id for r in session.query(Date.date_id)]
+dates_db = [r.date_id for r in session.query(RecordDate.date_id)]
 
 # Get new dates not in date dimension table
 new_dates = dates_df[~dates_df['date_id'].isin(dates_db)]
 
-# Add the new stations to dim_weather_station if nullable condition for date_id is satisfied
+# Add the new dates to dim_weather_station ONLY if date_id is not null
 if not new_dates['date_id'].isnull().values.any():
-    update_dimensions(new_dates, Date, session)
+    update_dimensions(new_dates, RecordDate, session)
 else:
     print("Date ID can not be null") #change to log later
+
+# --- Populate/update fact table - fact_weather_data
+weather_data_list = []
+
+# Loop over all the .txt files in the folder
+for file_name in os.listdir(data_folder):
+    if file_name.endswith('.txt'):
+        # Extract the weather station id from the file name
+        station_id = file_name.split('.')[0]
+        
+        # Open the file and read its contents
+        with open(os.path.join(data_folder, file_name), 'r') as file:
+            for line in file:
+                # Split the line into its four components
+                date_str, max_temp_str, min_temp_str, precip_str = line.strip().split('\t')
+                
+                # Convert the date string to a datetime object
+                #date = datetime.strptime(date_str, '%Y%m%d')
+                
+                # Check if the record already exists in the fact table
+                existing_record = session.query(WeatherData).\
+                    join(WeatherData.station).\
+                    join(WeatherData.date).\
+                    filter(WeatherStation.station_id == station_id).\
+                    filter(RecordDate.date_id == date_str).\
+                    first()
+                
+                # If the record doesn't exist, add it to the fact table
+                if existing_record is None:
+                    date_id = date_str
+                    station_key = session.query(WeatherStation.station_key).filter(WeatherStation.station_id == station_id).scalar()
+                    max_temp = int(max_temp_str) / 10
+                    min_temp = int(min_temp_str) / 10
+                    precipitation = int(precip_str) / 10
+                    weather_data = WeatherData(date_id=date_id, station_key=station_key, max_temp=max_temp, min_temp=min_temp, precipitation=precipitation)
+                    weather_data_list.append(weather_data)
+
+
+session.bulk_save_objects(weather_data_list)
+try:
+    session.commit()
+except SQLAlchemyError as e:
+    print(str(e)) # change to log later
+    session.rollback()
+
+
+
+
+# Read all the files and store in a dataframe
+abc = []
+for file in files:
+    df = pd.read_csv(file, sep='\t', header=None) #read first column only
+    df = df.rename(columns={0: "date_id"})
+    abc.append(df)
+d = pd.concat(abc)
+
+add_rows = 
+
+
+import time
+conn = sqlite3.connect('./database/weather.db')
+cursor = conn.cursor()
+t0 = time.time()
+for file_name in os.listdir(data_folder)[0:10]:
+    if file_name.endswith('.txt'):
+        # Extract the weather station id from the file name
+        station_id = file_name.split('.')[0]
+        
+        # Open the file and read its contents
+        with open(os.path.join(data_folder, file_name), 'r') as file:
+            for line in file:
+                # Split the line into its four components
+                date_str, max_temp_str, min_temp_str, precip_str = line.strip().split('\t')
+                
+                # Convert the date string to a datetime object
+                #date = datetime.strptime(date_str, '%Y%m%d')
+                
+                # Check if the record already exists in the fact table
+                # existing_record = session.query(WeatherData).\
+                #     join(WeatherData.station).\
+                #     filter(WeatherStation.station_id == station_id).\
+                #     filter(WeatherData.date_id == date_str).\
+                #     first()
+                
+                # existing_record_query = (select(WeatherData)
+                #     .select_from(join(WeatherData, WeatherStation, WeatherData.station_key == WeatherStation.station_key))
+                #     .where((WeatherStation.station_id == station_id) & (WeatherData.date_id == date_str))
+                # )
+                # existing_record = session.execute(existing_record_query).scalar()
+
+                query = cursor.execute(
+                    """
+                    SELECT *
+                    FROM fact_weather_data
+                    INNER JOIN dim_weather_station ON fact_weather_data.station_key = dim_weather_station.station_key
+                    WHERE dim_weather_station.station_id = ? AND fact_weather_data.date_id = ?
+                    LIMIT 1;
+                    """,
+                    (station_id, date_str)
+                )
+
+                # Fetch the first row from the result set
+                existing_record = cursor.fetchone()
+
+                # If the record doesn't exist, add it to the fact table
+                if existing_record is None:
+                    date_id = date_str
+                    #station_query = select(WeatherStation.station_key).where(WeatherStation.station_id == station_id)
+                    #station_key = session.execute(station_query).scalar()
+                    query = cursor.execute(f"SELECT station_key FROM dim_weather_station WHERE station_id = '{station_id}'")
+                    station_key = cursor.fetchone()[0] #extract the first part of tuple
+                    max_temp = int(max_temp_str) / 10
+                    min_temp = int(min_temp_str) / 10
+                    precipitation = int(precip_str) / 10
+                    weather_data = WeatherData(date_id=date_id, station_key=station_key, max_temp=max_temp, min_temp=min_temp, precipitation=precipitation)
+                    weather_data_list.append(weather_data)
+print (str(time.time() - t0) + " secs")
+
+#---------
+
+conn = sqlite3.connect('./database/weather.db')
+cur = conn.cursor()
+t0 = time.time()
+for file_name in os.listdir(data_folder)[0:10]:
+    if file_name.endswith('.txt'):
+        # Extract the weather station id from the file name
+        station_id = file_name.split('.')[0]
+        
+        # Open the file and read its contents
+        with open(os.path.join(data_folder, file_name), 'r') as file:
+            for line in file:
+                # Split the line into its four components
+                date_str, max_temp_str, min_temp_str, precip_str = line.strip().split('\t')
+                
+                # Convert the date string to a datetime object
+                #date = datetime.strptime(date_str, '%Y%m%d')
+                
+                # Check if the record already exists in the fact table
+                lala = pd.read_sql(f'''
+                SELECT * FROM WeatherData
+                INNER JOIN WeatherStation ON WeatherData.station_key = WeatherStation.station_key
+                WHERE WeatherStation.station_id = {station_id}
+                AND WeatherData.date_id = {date_str}
+                ''', conn)
+print (str(time.time() - t0) + " secs")
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     
@@ -84,7 +247,8 @@ else:
 conn = sqlite3.connect('./database/weather.db')
 cur = conn.cursor()
 # Execute the SQL statement to drop the table
-cur.execute("DELETE from dim_date")
+cur.execute("DROP TABLE dim_date")
+cur.execute('DROP TABLE dim_weather_station')
 cur.execute('DROP TABLE fact_weather_data')
 
 # Commit the changes to the database
@@ -96,11 +260,11 @@ cur.close()
 
 
 # Define a SQL query to select the top 10 rows from the table
-query = "SELECT station_id from dim_weather_station"
+query = "SELECT * from dim_date"
 # Use the read_sql() method to execute the query and return the results as a DataFrame
 results = pd.read_sql(query, conn)
 # Print the results
-print(type(results))
+print((results))
 
 
 
