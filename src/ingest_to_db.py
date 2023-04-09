@@ -6,7 +6,7 @@ from datetime import datetime              #to work with datetime type
 import pandas as pd
 import glob #may need to remove because i can do same stuff in os library
 from data_model import WeatherStation, Date, WeatherData
-from functions import create_db_connection, create_reference_station_table
+from functions import create_db_connection, create_reference_station_table, update_dimensions
 import sqlite3 #to directly connect to database (used for creating reference stations list table)
 from sqlalchemy.exc import SQLAlchemyError #to catch db errors
 
@@ -40,23 +40,40 @@ new_stations = reference_stations[~reference_stations['station_id'].isin(station
 
 # Add the new stations to dim_weather_station if nullable condition for station_id is satisfied
 if not new_stations['station_id'].isnull().values.any():
-    # Convert rows to dictionary
-    dim_weather_station = new_stations.to_dict(orient='records')
-    # Create a list of WeatherStation objects
-    station_objects = [WeatherStation(**station) for station in dim_weather_station]
-    # Insert the WeatherStation objects
-    session.add_all(station_objects)
-    # Commit the session to insert the new stations into the database
-    try:
-        session.commit()
-    except SQLAlchemyError as e:
-        print(str(e)) # change to log later
-        session.rollback()
+    update_dimensions(new_stations, WeatherStation, session)
 else:
     print("Station ID can not be null") #change to log later
 
 # --- Populate/Update dimension table: dim_date
 
+# Get a list of text files to read
+files = glob.glob(f'{data_folder}/*.txt')
+
+# Read all the files and store in a dataframe
+dates = []
+for file in files:
+    df = pd.read_csv(file, sep='\t', header=None, usecols=[0]) #read first column only
+    df = df.rename(columns={0: "date_id"})
+    dates.append(df)
+dates_df = pd.concat(dates).drop_duplicates()
+
+# Create other date columns
+dates_df['date_alternate'] = pd.to_datetime(dates_df['date_id'], format='%Y%m%d')
+dates_df['day'] = dates_df['date_alternate'].dt.day
+dates_df['month'] = dates_df['date_alternate'].dt.month
+dates_df['year'] = dates_df['date_alternate'].dt.year
+
+# Retrieve date id already stored in the dim_dates table in db
+dates_db = [r.date_id for r in session.query(Date.date_id)]
+
+# Get new dates not in date dimension table
+new_dates = dates_df[~dates_df['date_id'].isin(dates_db)]
+
+# Add the new stations to dim_weather_station if nullable condition for date_id is satisfied
+if not new_dates['date_id'].isnull().values.any():
+    update_dimensions(new_dates, Date, session)
+else:
+    print("Date ID can not be null") #change to log later
 
 
     
@@ -67,8 +84,8 @@ else:
 conn = sqlite3.connect('./database/weather.db')
 cur = conn.cursor()
 # Execute the SQL statement to drop the table
-cur.execute('DELETE from dim_weather_station')
-cur.execute('DROP TABLE reference_nasa_table')
+cur.execute("DELETE from dim_date")
+cur.execute('DROP TABLE fact_weather_data')
 
 # Commit the changes to the database
 conn.commit()
@@ -90,8 +107,7 @@ print(type(results))
 
 
 
-# Get a list of text files to read
-files = glob.glob(f'{data_folder}/*.txt')
+
 
 # Retrieve all the station names
 stations = []

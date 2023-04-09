@@ -10,6 +10,7 @@ import io #to parse string response
 #from geopy.geocoders import Nominatim 
 import reverse_geocoder as rg #reverse geocode to find state
 import sqlite3 #to directly connect to database (used for creating reference stations list table)
+from sqlalchemy.exc import SQLAlchemyError #to catch db errors
 
 # Function to connect to database and create tables if they do not exist
 def create_db_connection(x):
@@ -43,8 +44,9 @@ def parse_url_response(url):
     station_list.columns = station_list.columns.str.strip()
     return station_list #dataframe
 
-# Function to find state given a series of latitude and longitude values
 def find_state(pd_series_latitude, pd_series_longitude):
+    '''Function to find state given a series of latitude and longitude values'''
+
     # Create a list of tuples for the lat-lon pairs
     coordinates = list(zip(pd_series_latitude, pd_series_longitude))
     # Perform reverse geocoding
@@ -53,8 +55,9 @@ def find_state(pd_series_latitude, pd_series_longitude):
     states = [r['admin1'] for r in results]
     return states
 
-# Function to store reference weather station table retrieved from NASA GISS url
 def create_reference_station_table():
+    '''Function to store reference weather station table retrieved from NASA GISS url'''
+
     conn = sqlite3.connect('./database/weather.db') #direct connection to db
     table_exists = pd.read_sql_query("SELECT name FROM sqlite_master WHERE type='table' AND name='reference_nasa_table'", conn).shape[0] > 0 #check if reference station table exists  
     if not table_exists:    
@@ -64,9 +67,23 @@ def create_reference_station_table():
         us_stations['state'] = find_state(us_stations['lat'], us_stations['lon'])             #get state for each station
         us_stations.reset_index(drop=True).to_sql('reference_nasa_table', conn)               #create if reference table does not exists
     conn.close()
-    return None
 
+def update_dimensions(df, db_class, session):
+    '''Function to create or update dimension tables'''
 
+    # Convert rows to dictionary
+    record_dictionary = df.to_dict(orient='records')
+    # Create a list of objects
+    objects = [db_class(**row) for row in record_dictionary]
+    # Insert the WeatherStation objects
+    session.add_all(objects)
+    # Commit the session to insert the new stations into the database
+    try:
+        session.commit()
+    except SQLAlchemyError as e:
+        print(str(e)) # change to log later
+        session.rollback()
+    
 
 
 #add a unit test to check data type for each function

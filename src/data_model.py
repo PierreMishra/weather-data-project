@@ -12,7 +12,7 @@ class WeatherStation(Base):
     __tablename__ = 'dim_weather_station'
 
     # Define columns and data types
-    id = Column(Integer, autoincrement=True, primary_key=True, nullable=False)
+    id = Column(Integer, primary_key=True, nullable=False)
     station_id = Column(String(20), nullable=False)
     station_name = Column(String(50))
     state = Column(String(12))
@@ -32,8 +32,8 @@ class Date(Base):
     __tablename__ = 'dim_date'
 
     # Define columns and data types
-    id = Column(Integer, autoincrement=True, nullable=False)
-    date_id = Column(Integer, primary_key=True, nullable=False)
+    id = Column(Integer, primary_key=True, nullable=False)
+    date_id = Column(Integer, nullable=False)
     date_alternate = Column(Date, nullable=False)
     day = Column(Integer, nullable=False)
     month = Column(Integer, nullable=False)
@@ -55,7 +55,7 @@ class WeatherData(Base):
     # Define columns and data types
     id = Column(Integer, primary_key=True)
     date_id = Column(Integer, ForeignKey(Date.date_id), primary_key=True) #composite key 1
-    station_id = Column(Integer, ForeignKey(WeatherStation.station_id), primary_key=True) #composite key 2
+    station_id = Column(Integer, ForeignKey(WeatherStation.id), primary_key=True) #composite key 2
     max_temp = Column(Float)
     min_temp = Column(Float)
     precipitation = Column(Float)
