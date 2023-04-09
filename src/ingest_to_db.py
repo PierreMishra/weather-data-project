@@ -1,3 +1,9 @@
+''' 
+3 main steps:
+
+Talk about state stuff
+'''
+
 # Import libraries
 import sys
 sys.path.append('./src')                   #to load from other scripts in the same folder
