@@ -12,10 +12,12 @@ import reverse_geocoder as rg #reverse geocode to find state
 import sqlite3 #to directly connect to database (used for creating reference stations list table)
 from sqlalchemy.exc import SQLAlchemyError #to catch db errors
 
-# Function to connect to database and create tables if they do not exist
-def create_db_connection(x):
+
+def create_db_connection(database_location):
+    '''Function to connect to database and create tables if they do not exist'''
+
     # Create an engine that connects to the SQLite database (if it does not exist)
-    engine = create_engine(x)
+    engine = create_engine(database_location)
     # Create a Session maker class to create sessions for interacting with db
     Session = sessionmaker(bind=engine)
     session = Session()
@@ -24,9 +26,10 @@ def create_db_connection(x):
     Base.metadata.create_all(engine)
     return session
 
-# Function to parse station information from GET response retrieved from NASA's url
 def parse_url_response(url):
-    response = requests.get(url) #send http get request to the URL
+    '''Function to parse station information from GET response retrieved from NASA's url'''
+
+    response = requests.get(url, timeout=10) #send http get request to the URL
     data = response.content.decode('utf-8') #decode the response object
     station_list = pd.read_csv(io.StringIO(data)) #store in a dataframe, unparsed
     # Split the string by whitespace and create new columns
@@ -60,7 +63,7 @@ def create_reference_station_table():
 
     conn = sqlite3.connect('./database/weather.db') #direct connection to db
     table_exists = pd.read_sql_query("SELECT name FROM sqlite_master WHERE type='table' AND name='reference_nasa_table'", conn).shape[0] > 0 #check if reference station table exists  
-    if not table_exists:    
+    if not table_exists:  
         url = 'https://data.giss.nasa.gov/gistemp/station_data_v4/station_list.txt'           #retrieve the list of all weather stations and parse response into a dataframe
         all_stations = parse_url_response(url)                                                #get all station list
         us_stations = all_stations[all_stations['station_id'].str.startswith('USC')].copy()   #keep US stations
