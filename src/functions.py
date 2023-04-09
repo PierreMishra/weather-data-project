@@ -71,8 +71,8 @@ def create_reference_station_table():
         us_stations.reset_index(drop=True).to_sql('reference_nasa_table', conn)               #create if reference table does not exists
     conn.close()
 
-def update_dimensions(df, db_class, session):
-    '''Function to create or update dimension tables'''
+def update_database_table(df, db_class, session):
+    '''Function to create or update database tables using a dataframe'''
 
     # Convert rows to dictionary
     record_dictionary = df.to_dict(orient='records')

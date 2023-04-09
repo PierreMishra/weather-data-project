@@ -1,12 +1,16 @@
+'''
+Insert info about this script
+'''
+
 # Import libraries
-from sqlalchemy import Column, Integer, Float, String, Date, ForeignKey #only import necessary classes
+from sqlalchemy import Column, Integer, Float, String, Date, Numeric, ForeignKey #only import necessary classes
 from sqlalchemy.orm import declarative_base, relationship   #to create Base class (catalog field mappings)
 
 # Define Base class
 Base = declarative_base()
 
-# Dimension Table - Define table structure for weather stations
 class WeatherStation(Base):
+    '''Dimension Table - Define table structure for weather stations'''
 
     # Assign table name in the database
     __tablename__ = 'dim_weather_station'
@@ -24,9 +28,8 @@ class WeatherStation(Base):
     def __repr__(self):
         return f"{self.station_key} {self.station_id} {self.station_name} {self.state}"
 
-#####-------change Date to RecordDate
-# Dimension Table - Define table structure for weather stations (dimension table)
 class RecordDate(Base):
+    '''Dimension Table - Define table structure for weather stations'''
 
     # Assign table name in the database
     __tablename__ = 'dim_date'
@@ -46,8 +49,8 @@ class RecordDate(Base):
     def __repr__(self):
         return f"{self.date_key} {self.date_id} {self.date_alternate} {self.day} {self.month} {self.year}"
 
-# Fact Table - Define table structure for weather data (fact table)
 class WeatherData(Base):
+    '''Fact Table - Define table structure for weather data (fact table)'''
     
     # Assign table name in the database
     __tablename__ = 'fact_weather_data'
@@ -67,3 +70,21 @@ class WeatherData(Base):
     def __repr__(self):
         return f"{self.date_id} {self.station_key} {self.max_temp} {self.min_temp} {self.precipitation}"
 
+class WeatherSummary(Base):
+    '''Analysis - Define table structure to hold summarized data'''
+
+    # Assign table name in the database
+    __tablename__ = 'analysis_weather_summary'
+
+    # Define columns and data types
+    id = Column(Integer, primary_key=True)
+    year = Column(Integer, nullable=False)
+    station_id = Column(Integer, nullable=False)
+    state = Column(String(12), nullable=False)
+    avg_max_temp = Column(Float)
+    avg_min_temp = Column(Float)
+    total_precip = Column(Float)
+
+    # Define representation for debugging and logging purposes
+    def __repr__(self):
+        return f"{self.id} {self.year} {self.station_id} {self.avg_max_temp} {self.avg_min_temp} {self.total_precip}"
