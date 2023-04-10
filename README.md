@@ -8,7 +8,7 @@
   <h3 align="center">Weather Data API</h3>
 
   <p align="center">
-    Building Data Pipeline and Flask API
+    Building a Data Pipeline and Flask API
   </p>
 </div>
 
@@ -83,3 +83,12 @@ Describe the workflow and general architecture
 Add workflow diagram
 
 ### Contact
+
+<!-- ACKNOWLEDGMENTS -->
+## Acknowledgments
+
+Many thanks to Othneil Drew for creating this beautiful README template
+
+* [README Template](https://github.com/othneildrew/Best-README-Template)
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
