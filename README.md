@@ -15,7 +15,7 @@
 # Overview
 
 <p align="center">
-<img src = "./images/api_swagger.PNG" align="center" height="50%", width="50%">
+<img src = "./images/api_swagger.PNG" align="center" height="50%" width="50%">
 </p>
 
 This project contains 4 main parts:
