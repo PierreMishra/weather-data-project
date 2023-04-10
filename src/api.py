@@ -9,8 +9,6 @@ A Swagger/OpenAPI type UI is also created for API documentation and testing.
 # Import libraries
 import sys
 import json
-import webbrowser
-import logging
 from flask import Flask, jsonify
 from flask_restful import Api, Resource, reqparse
 from flask_swagger_ui import get_swaggerui_blueprint
@@ -148,6 +146,5 @@ def swagger():
         return jsonify(json.load(f))
 
 if __name__ == '__main__':
-    #webbrowser.open_new_tab('http://localhost:5000/swagger') #automatically open UI on default browser
     app.run(debug=True, port=5000)
 
