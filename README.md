@@ -57,7 +57,7 @@ python -m venv venv
 ```
 NOTE: Using `python` or `python3` in Window's command prompt would depend on your python system installation.
 
-#### Activate virtual environment
+* #### Activate virtual environment
 Mac/Linux: 
 ```sh
 source venv/bin/activate
@@ -68,41 +68,59 @@ venv\Script\activate
 ```
 NOTE: Alternatively, `venv\bin\activate` may be used depending on your python installation.
 
-#### Installing requirements in the virtual environment
-Before running requirements.txt, run:
+* #### Installing requirements in the virtual environment
+Before installing pacakges from `requirements.txt`, install the following library:
+```sh
 pip3 install reverse_geocode==1.4.1
+```
 
-Then:
+Now we are ready to install all the remaining python packages
+```sh
 pip3 install -r requirements.txt
+```
+Now we are ready to run our data pipeline.
 
-### Running data pipeline
+## Running the code
 
-To run the data pipeline (runtime depends on your device, progress can be tracked using db.log file):
-On Mac/Linux:
+### Data Pipeline
+
+To run the data pipeline:
+```sh
 python3 src/run.py
+```
+NOTE: Runtime depends on your device specifications. For instance, my MacBook finished data ingestion in about 80-100 seconds but my PC took about 400 seconds. While the pipeline is being executed, we can track the progress using `db.log` file.
 
-On Windows (either one depending on your version of python):
-python3 src/run.py
-python src/run.py
+`run.py` executes the following modules as well:
+* `data_model.py`
+* `data_ingestion.py`
+* `data_analysis.py`
+* `functions.py`
 
-### Running Flask API
+The data is stored in `database/weather.db`
 
-To run the api:
-On Mac/Linux:
+### Flask API
+
+To start the Flask API server:
+```sh
 python3 src/api.py
+```
 
-On Windows (either one depending on your python configuration):
-python3 src/api.py
-python src/api.py
+Once you see the server running in your terminal, go to the following endpoint `127.0.0.1:5000/swagger` to see the Swagger/OpenAPI style documentation. A sample screenshot is provided above.
 
-Once you see the server running in terminal, go to the following endpoint to see the Swagger/OpenAPI style documentation
-127.0.0.1:5000/swagger
-
-To get JSON response use the following endpoints
-127.0.0.1:5000/weather
-127.0.0.1:5000/weather/stats
+We can use the `Try it out` feature of the Swagger documentation to test our API. We can filter our data by multiple optional parameters, as can be seen in this sample screenshot.
 
 
+
+To get JSON responses from our API, use the following endpoints
+* `127.0.0.1:5000/weather` - To retrieve daily weather records
+* `127.0.0.1:5000/weather/stats` - To retrieve summarized weather records
+
+
+`api.py` executes the following modules as well:
+* `data_model.py`
+* `unit_test.py`
+
+It also uses the `api_swagger.json` to construct the Swagger/OpenAPI documentation.
 
 
 Database, logs and api UI

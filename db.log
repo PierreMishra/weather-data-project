@@ -62,3 +62,11 @@
 2023-04-10 15:18:23,765:INFO:0 records ingested in fact_weather_data in 40.22s
 2023-04-10 15:18:23,771:INFO:Ingesting data in dim_weather_station
 2023-04-10 15:18:24,994:INFO:0 records ingested in analysis_weather_summary in 1.22s
+2023-04-10 17:24:42,760:INFO:Ingesting data in dim_weather_station
+2023-04-10 17:24:42,789:INFO:167 records ingested in dim_weather_station in 0.03s
+2023-04-10 17:24:42,789:INFO:Ingesting data in dim_date
+2023-04-10 17:24:43,610:INFO:10957 records ingested in dim_date in 0.82s
+2023-04-10 17:24:43,610:INFO:Ingesting data in fact_weather_data
+2023-04-10 17:26:04,908:INFO:1729957 records ingested in fact_weather_data in 81.30s
+2023-04-10 17:26:05,541:INFO:Ingesting data in dim_weather_station
+2023-04-10 17:26:06,801:INFO:4820 records ingested in analysis_weather_summary in 1.26s
