@@ -24,8 +24,8 @@ This project contains 4 main parts:
 3. `data_analysis.py` - Performing calculations on ingested weather station data
 4. `api.py` - Creating a Flask API and developing Swagger/OpenAPI documentation
 
-Some other important parts of the project:
-* I also defined some supporting functions and unit tests that are provided in the following modules:
+Some other important notes about this project:
+* I defined some supporting functions and unit tests that are provided in the following modules:
 `functions.py` `unit_tests.py`
 * All the python modules are located inside the `src` folder.
 * The SQLite3 database is stored in `database` folder. Due to the GitHub size limits, the `weather.db` file only contains an empty data model.
@@ -112,7 +112,9 @@ Once you see the server running in your terminal, go to the following endpoint `
 
 We can use the `Try it out` feature of the Swagger documentation to test our API. We can filter our data by multiple optional parameters, as can be seen in this sample screenshot.
 
-
+<p align="center">
+    <img src="images/api_swagger1.png">
+</p>
 
 To get JSON responses from our API, use the following endpoints
 * `127.0.0.1:5000/weather` - To retrieve daily weather records
@@ -125,20 +127,24 @@ To get JSON responses from our API, use the following endpoints
 
 It also uses the `api_swagger.json` to construct the Swagger/OpenAPI documentation.
 
+### Database Design
 
-Database, logs and api UI
+The `weather.db` data model follows a star schema suited for analytical and read-heavy workloads. We have the following tables in the database:
+1. `dim_weather_station` -  Dimension table containing a list of weather stations for which we have data. It also stores attributes about the weather stations such as their IDs, station names, and the states in which they are located. It also contains a surrogate key which is used to connect to the fact table `fact_weather_data`.
+2. `dim_date` - Dimension table containing a list of all the dates for which we have data. It also stores the date in various forms such as YYYYMMDD format, YYYY-MM-DD format, and the separate day, month, and year as integers for each date. YYYYMMDD formatted date column is connected to the `fact_weather_data`.
+3. `fact_weather_data` - Fact table containing all the raw weather records for each station and date
+4. `analysis_weather_summary` - Summary table containing the summary weather records by station, year, and state in which a station is located.
+5. `reference_nasa_table` - Reference table containing various attributes for weather stations across US. The full list of stations across the globe was found from here `https://data.giss.nasa.gov/gistemp/station_data_v4/station_list.txt` and was parsed and filtered to only contain the stations within the US.
 
-### Components
+Here is a schematic representation of the data model:
 
-Our data pipeline is executed using run.py
-
-This executes the following modules:
-data_model.py -> data_ingestion.py -> data_analysis.py
-
-Describe the workflow and general architecture
-Add workflow diagram
+<p align="center">
+    <img src="images/data_model.png">
+</p>
 
 ### Contact
+
+If you have any questions or thoughts about this project, feel free to reach out to me on LinkedIn. Thanks!
 
 <!-- ACKNOWLEDGMENTS -->
 ## Acknowledgments
