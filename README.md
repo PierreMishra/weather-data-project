@@ -87,7 +87,7 @@ To run the data pipeline:
 ```sh
 python3 src/run.py
 ```
-NOTE: Runtime depends on your device specifications. For instance, my MacBook finished data ingestion in about 80-100 seconds but my PC took about 400 seconds. While the pipeline is being executed, we can track the progress using `db.log` file.
+NOTE: Runtime depends on your device specifications. For instance, my MacBook finished data ingestion in about 80-100 seconds but my PC took about 400 seconds. While the pipeline is being executed, we can track the progress using `db.log` file (sample screenshot below).
 
 <p align="center">
     <img src="images/logs.png">
@@ -99,7 +99,7 @@ NOTE: Runtime depends on your device specifications. For instance, my MacBook fi
 * `data_analysis.py`
 * `functions.py`
 
-The data is stored in `database/weather.db`
+The data is stored in `database/weather.db`. More about data model can be found in *Database Design* section below.
 
 ### Flask API
 
