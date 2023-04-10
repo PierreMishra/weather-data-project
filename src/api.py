@@ -1,14 +1,24 @@
-import sys
-sys.path.append('./src')                   
+''' 
+This script contains a Flask app in the form of REST API to retrieve 
+raw and summarized weather data from the database. It also allows an
+user to filter the data using query parameters. 
 
-from flask import Flask, jsonify, request
+A Swagger/OpenAPI type UI is also created for API documentation and testing.
+'''
+
+# Import libraries
+import sys
+import json
+import webbrowser
+import logging
+from flask import Flask, jsonify
 from flask_restful import Api, Resource, reqparse
 from flask_swagger_ui import get_swaggerui_blueprint
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
-from data_model import Base, WeatherStation, WeatherData, RecordDate, WeatherSummary
-import json
+from data_model import WeatherStation, WeatherData, RecordDate, WeatherSummary
 
+sys.path.append('./src')  #locate python modules
 
 # Create a new Flask application and set configuration
 app = Flask(__name__)
@@ -56,7 +66,7 @@ class WeatherAPI(Resource):
             if args['state']:
                 query = query.filter(WeatherStation.state == args['state'])
 
-            # Pagination
+            # Implement pagination
             offset = (args['page'] - 1) * args['limit'] #skip records to navigate to other pg
             query = query.offset(offset).limit(args['limit']) 
 
@@ -97,6 +107,10 @@ class WeatherStatsAPI(Resource):
             if args['state']:
                 query = query.filter(WeatherSummary.state == args['state'])
 
+            # Implement pagination
+            offset = (args['page'] - 1) * args['limit'] #skip records to navigate to other pg
+            query = query.offset(offset).limit(args['limit'])
+
             # Build the response
             result = []
             for weather_summary in query.all():
@@ -129,9 +143,11 @@ app.register_blueprint(swaggerui_blueprint, url_prefix=SWAGGER_URL)
 
 @app.route('/swagger.json')
 def swagger():
-    with open('swagger.json', 'r', encoding='utf-8') as f:
+    ''' JSON document to display the API documentation in Swagger UI'''
+    with open('api_swagger.json', 'r', encoding='utf-8') as f:
         return jsonify(json.load(f))
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    #webbrowser.open_new_tab('http://localhost:5000/swagger') #automatically open UI on default browser
+    app.run(debug=True, port=5000)
 

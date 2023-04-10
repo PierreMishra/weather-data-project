@@ -1,18 +1,20 @@
+'''This script contains several functions that are used in other python modules'''
+
 import sys
-sys.path.append('./src')                   #to load from other scripts in the same folder
-from sqlalchemy import create_engine #to create database engine to interact with db
-from sqlalchemy.orm import sessionmaker    #to create db sessions
-from data_model import Base, WeatherData   #import Base and WeatherData classes from data_model.py
-import requests #to send HTTP requests for station id information 
-import re #regular expression to parse station data from NASA
-import pandas as pd
-import io #to parse string response
-#from geopy.geocoders import Nominatim 
-import reverse_geocoder as rg #reverse geocode to find state
-import sqlite3 #to directly connect to database (used for creating reference stations list table)
-from sqlalchemy.exc import SQLAlchemyError #to catch db errors
-from datetime import datetime
 import logging
+import io #to parse string response
+from datetime import datetime
+import sqlite3
+import re #regular expression to parse station data from NASA
+import requests
+import reverse_geocoder as rg #reverse geocode to find state
+import pandas as pd
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.exc import SQLAlchemyError #to catch db errors
+from data_model import Base
+
+sys.path.append('./src')
 
 def create_db_connection(database_location):
     '''Function to connect to database and create tables if they do not exist'''
@@ -29,10 +31,12 @@ def create_db_connection(database_location):
 
 def parse_url_response(url):
     '''Function to parse station information from GET response retrieved from NASA's url'''
-
-    response = requests.get(url, timeout=10) #send http get request to the URL
-    data = response.content.decode('utf-8') #decode the response object
-    station_list = pd.read_csv(io.StringIO(data)) #store in a dataframe, unparsed
+    # Send http get request to the URL
+    response = requests.get(url, timeout=10)
+    # Decode the response object
+    data = response.content.decode('utf-8') 
+    # Store in a dataframe, unparsed
+    station_list = pd.read_csv(io.StringIO(data))
     # Split the string by whitespace and create new columns
     station_list = station_list.rename(columns={station_list.columns[0]: 'column'}) #remove unparsed column name
     def parse_row(row):
@@ -50,7 +54,6 @@ def parse_url_response(url):
 
 def find_state(pd_series_latitude, pd_series_longitude):
     '''Function to find state given a series of latitude and longitude values'''
-
     # Create a list of tuples for the lat-lon pairs
     coordinates = list(zip(pd_series_latitude, pd_series_longitude))
     # Perform reverse geocoding
@@ -61,15 +64,21 @@ def find_state(pd_series_latitude, pd_series_longitude):
 
 def create_reference_station_table():
     '''Function to store reference weather station table retrieved from NASA GISS url'''
-
-    conn = sqlite3.connect('./database/weather.db') #direct connection to db
-    table_exists = pd.read_sql_query("SELECT name FROM sqlite_master WHERE type='table' AND name='reference_nasa_table'", conn).shape[0] > 0 #check if reference station table exists  
-    if not table_exists:  
-        url = 'https://data.giss.nasa.gov/gistemp/station_data_v4/station_list.txt'           #retrieve the list of all weather stations and parse response into a dataframe
-        all_stations = parse_url_response(url)                                                #get all station list
-        us_stations = all_stations[all_stations['station_id'].str.startswith('USC')].copy()   #keep US stations
-        us_stations['state'] = find_state(us_stations['lat'], us_stations['lon'])             #get state for each station
-        us_stations.reset_index(drop=True).to_sql('reference_nasa_table', conn)               #create if reference table does not exists
+    # Direct connection to db
+    conn = sqlite3.connect('./database/weather.db')
+    # check if reference station table exists
+    table_exists = pd.read_sql_query("SELECT name FROM sqlite_master WHERE type='table' AND name='reference_nasa_table'", conn).shape[0] > 0
+    if not table_exists:
+        # Retrieve the list of all weather stations and parse response into a dataframe
+        url = 'https://data.giss.nasa.gov/gistemp/station_data_v4/station_list.txt'
+        # Get all station list
+        all_stations = parse_url_response(url)
+        # Keep US stations
+        us_stations = all_stations[all_stations['station_id'].str.startswith('USC')].copy()
+        # Get state for each station
+        us_stations['state'] = find_state(us_stations['lat'], us_stations['lon'])
+        # Create if reference table does not exists
+        us_stations.reset_index(drop=True).to_sql('reference_nasa_table', conn)
     conn.close()
 
 def update_database_table(df, db_class, session):
@@ -85,14 +94,12 @@ def update_database_table(df, db_class, session):
     try:
         session.commit()
     except SQLAlchemyError as e:
-        print(str(e)) # change to log later
         session.rollback()
-    
-def database_log(df, start_time, table_name):        
+
+def database_log(df, start_time, table_name):
+    ''' Log data ingestions to db.log'''       
     # Create log message
     record_len = len(df)
     end_time = datetime.now()
     duration = (end_time - start_time).total_seconds()
     logging.info(f'{record_len} records ingested in {table_name} in {duration:.2f}s')
-
-#add a unit test to check data type for each function

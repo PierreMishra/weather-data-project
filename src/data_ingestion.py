@@ -10,21 +10,17 @@ import sys
 import os
 import glob #for loading files in a folder
 import sqlite3 #to directly connect to database (used for creating reference stations list table)
-import pandas as pd
 import logging
 from datetime import datetime
+import pandas as pd
+from sqlalchemy.exc import SQLAlchemyError #to catch db errors
 from data_model import WeatherStation, RecordDate, WeatherData
 from functions import create_db_connection, create_reference_station_table, update_database_table, database_log
-from sqlalchemy.exc import SQLAlchemyError #to catch db errors
 
 sys.path.append('./src') #locate python modules
 
 def data_ingestion():
     ''' This is the workflow for ingesting data to our database tables'''
-
-    # Configure the logging file
-    logging.basicConfig(filename='database.log', level=logging.INFO,
-                        format='%(asctime)s:%(levelname)s:%(message)s')
 
     # Configure connection to SQLite weather database
     session = create_db_connection('sqlite:///database/weather.db')
