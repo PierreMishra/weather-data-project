@@ -18,13 +18,20 @@
     <img src="images/api_swagger.png">
 </p>
 
-This project contains 4 main parts:
-1. Designing a data model to represent the weather data records using SQLAlchemy ORM and SQLite3 database.
-`data_model.py`
-2. Processing and ingesting the weather data stored in the wx_data folder into the database.
-3. Creating a Flask API and developing Swagger/OpenAPI documentation
+* This project contains 4 main parts:
+1. `data_model.py` - Designing a data model to represent the weather data records using SQLAlchemy ORM and SQLite3 database.
+2. `data_ingestion.py` - Processing and ingesting the weather data stored in the wx_data folder into the database.
+3. `data_analysis.py` - Performing calculations on ingested weather station data
+4. `api.py` - Creating a Flask API and developing Swagger/OpenAPI documentation
 
+I also defined some supporting functions and unit tests that are provided in the following modules:
+`functions.py` `unit_tests.py`
 
+All the python modules are located inside the `src` folder.
+
+The SQLite3 database is stored in database folder. Due to the GitHub size limits, the .db file contains empty data model.
+
+Data ingestion logs are stored in `db.log` file in the root folder.
 
 ### Getting Started
 
