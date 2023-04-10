@@ -19,16 +19,13 @@ from sqlalchemy import select, join #to run sqlalchemy core
 import logging
 
 # Configure the logging file
-logging.basicConfig(filename='db.log', level=logging.INFO,
+logging.basicConfig(filename='database.log', level=logging.INFO,
                     format='%(asctime)s:%(levelname)s:%(message)s')
 
 if __name__ == '__main__':
 
     # Configure connection to SQLite weather database
     session = create_db_connection('sqlite:///database/weather.db')
-
-    # Set the start time for log file
-    logging.info('Data ingestion started')
 
     # Define the directory where the text files are located
     DATA_FOLDER = './wx_data'
@@ -37,6 +34,10 @@ if __name__ == '__main__':
     file_names = os.listdir(DATA_FOLDER)
 
     # --- Populate/Update dimension table: dim_weather_station
+
+    # Set the start time for log file
+    logging.info('Ingesting data in dim_weather_station')
+    start_time = datetime.now()
 
     # Retrieve station id from all files ending with .txt
     stations_txt = [os.path.splitext(f)[0] for f in file_names if f.endswith('.txt')]
@@ -62,10 +63,17 @@ if __name__ == '__main__':
     else:
         print("Station ID can not be null") #change to log later
 
+    # Log completion
     num_dim_weather_records_ingested = len(new_stations)
-    logging.info(f'Number of records ingested: {num_records_ingested}')
+    end_time = datetime.now()
+    duration = (end_time - start_time).total_seconds()
+    logging.info(f'{num_dim_weather_records_ingested} records ingested in dim_weather_station in {duration:.2f}s')
 
     # --- Populate/Update dimension table: dim_date
+
+    # Set the start time for log file
+    logging.info('Ingesting data in dim_dates')
+    start_time = datetime.now()
 
     # Get a list of text files to read
     files = glob.glob(f'{DATA_FOLDER}/*.txt')
@@ -96,7 +104,17 @@ if __name__ == '__main__':
     else:
         print("Date ID can not be null") #change to log later
 
+    # Log completion
+    num_dim_date_records_ingested = len(new_dates)
+    end_time = datetime.now()
+    duration = (end_time - start_time).total_seconds()
+    logging.info(f'{num_dim_date_records_ingested} records ingested in dim_dates in {duration:.2f}s')
+
     # --- Populate/update fact table - fact_weather_data
+
+    # Set the start time for log file
+    logging.info('Ingesting data in fact_weather_data')
+    start_time = datetime.now()
 
     weather_data_list = []
 
@@ -148,6 +166,12 @@ if __name__ == '__main__':
     except SQLAlchemyError as e:
         print(str(e)) # change to log later
         session.rollback()
+
+    # Log completion
+    num_fact_weather_records_ingested = len(weather_data_list)
+    end_time = datetime.now()
+    duration = (end_time - start_time).total_seconds()
+    logging.info(f'{num_fact_weather_records_ingested} records ingested in fact_weather_data in {duration:.2f}s')
 
 
 

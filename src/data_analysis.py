@@ -5,6 +5,16 @@ import sqlite3
 import pandas as pd
 from data_model import WeatherSummary
 from functions import create_db_connection, update_database_table
+import logging
+from datetime import datetime
+
+# Configure the logging file
+logging.basicConfig(filename='db.log', level=logging.INFO,
+                    format='%(asctime)s:%(levelname)s:%(message)s')
+
+# Set the start time for log file
+logging.info('Ingesting data in analysis_weather_summary')
+start_time = datetime.now()
 
 # Create database connection to execute SQL
 conn = sqlite3.connect('./database/weather.db')
@@ -41,6 +51,12 @@ new_summary = query[~query['station_id'].isin(station_id) & ~query['year'].isin(
 
 # Push to summary table
 update_database_table(new_summary, WeatherSummary, session)
+
+# Log completion
+num_records = len(new_summary)
+end_time = datetime.now()
+duration = (end_time - start_time).total_seconds()
+logging.info(f'{num_records} records ingested in analysis_weather_summary in {duration:.2f}s')
 
 
 
