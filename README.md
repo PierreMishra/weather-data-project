@@ -18,7 +18,7 @@
     <img src="images/api_swagger.png">
 </p>
 
-* This project contains 4 main parts:
+This project contains 4 main parts:
 1. `data_model.py` - Designing a data model to represent the weather data records using SQLAlchemy ORM and SQLite3 database.
 2. `data_ingestion.py` - Processing and ingesting the weather data stored in the wx_data folder into the database.
 3. `data_analysis.py` - Performing calculations on ingested weather station data
@@ -29,27 +29,46 @@ I also defined some supporting functions and unit tests that are provided in the
 
 All the python modules are located inside the `src` folder.
 
-The SQLite3 database is stored in database folder. Due to the GitHub size limits, the .db file contains empty data model.
+The SQLite3 database is stored in `database` folder. Due to the GitHub size limits, the `weather.db` file only contains empty data model.
 
 Data ingestion logs are stored in `db.log` file in the root folder.
 
-### Getting Started
+## Getting Started
 
-Prerequisites 
+Clone this GitHub repository to your local machine or download it as a ZIP file. Then run the following steps to execute the data pipeline locally and interact with the API.
 
-In the terminal, 
-cd to the working directory where the procject was cloned to or unzipped to.
+## Prerequisites and Installations 
+
+Using the terminal, set the working directory to the root folder where the procject was cloned or unzipped. Open up terminal (command prompt on Windows) and use the `cd` command to navigate to the project folder.
+```sh
+  cd /your/local/folder
+```
 
 Based on your OS and python version installed, use one of the following to setup a virtual environment
 
-On Mac/Linux:
-Create virtual environment: python3 -m venv venv
-Activate virtual environment: source env/bin/activate
-
-On Windows:
+#### Create virtual environment 
+Mac/Linux:
+```sh
+python3 -m venv venv
+```
+Windows:
+```sh
 python -m venv venv
-venv\Script\activate
+```
+NOTE: Using `python` or `python3` in Window's command prompt would depend on your python system installation.
 
+#### Activate virtual environment
+Mac/Linux: 
+```sh
+source venv/bin/activate
+```
+Windows:
+```sh
+venv\Script\activate
+```
+NOTE: Alternatively, `venv\bin\activate` may be used depending on your python installation.
+
+#### Installing requirements in the virtual environment
 Before running requirements.txt, run:
 pip3 install reverse_geocode==1.4.1
 
