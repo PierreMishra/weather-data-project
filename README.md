@@ -46,7 +46,7 @@ Using the terminal, set the working directory to the root folder where the procj
 
 Based on your OS and python version installed, use one of the following to setup a virtual environment
 
-#### Create virtual environment 
+#### * Create virtual environment 
 Mac/Linux:
 ```sh
 python3 -m venv venv
