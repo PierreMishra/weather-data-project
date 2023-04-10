@@ -16,11 +16,19 @@ from functions import create_db_connection, create_reference_station_table, upda
 import sqlite3 #to directly connect to database (used for creating reference stations list table)
 from sqlalchemy.exc import SQLAlchemyError #to catch db errors
 from sqlalchemy import select, join #to run sqlalchemy core
+import logging
+
+# Configure the logging file
+logging.basicConfig(filename='db.log', level=logging.INFO,
+                    format='%(asctime)s:%(levelname)s:%(message)s')
 
 if __name__ == '__main__':
 
     # Configure connection to SQLite weather database
     session = create_db_connection('sqlite:///database/weather.db')
+
+    # Set the start time for log file
+    logging.info('Data ingestion started')
 
     # Define the directory where the text files are located
     DATA_FOLDER = './wx_data'
@@ -53,6 +61,9 @@ if __name__ == '__main__':
         update_database_table(new_stations, WeatherStation, session)
     else:
         print("Station ID can not be null") #change to log later
+
+    num_dim_weather_records_ingested = len(new_stations)
+    logging.info(f'Number of records ingested: {num_records_ingested}')
 
     # --- Populate/Update dimension table: dim_date
 

@@ -1,0 +1,328 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Weather Station API",
+    "description": "Retrieve weather data records (1985 - 2014) of weather stations located in the states of Nebraska, Iowa, Illinois, Indiana, or Ohio. \n\n Navigate to the GitHub repository here - [Weather Data Project](https://github.com/PierreMishra/weather-data-project)",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/weather": {
+      "get": {
+        "tags": [
+          "Raw Records"
+        ],
+        "summary": "Get daily weather station records",
+        "description": "Records can be filtered using optional parameters below. Sample values have been provided.",
+        "parameters": [
+          {
+            "name": "station_id",
+            "in": "query",
+            "description": "Try out a sample of available station IDs",
+            "required": false,
+            "explode": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "USC00110072",
+                "USC00134142",
+                "USC00258915",
+                "USC00331152",
+                "USC00332791"
+              ]
+            }
+          },
+          {
+            "name": "date",
+            "in": "query",
+            "description": "Try out a sample of available dates in YYYYMMDD format",
+            "required": false,
+            "explode": false,
+            "schema": {
+              "type": "integer",
+              "enum": [
+                "19850101",
+                "19991204",
+                "20050502",
+                "20121124",
+                "20141231"
+              ]
+            }
+          },
+          {
+            "name": "state",
+            "in": "query",
+            "description": "Select meters from a certain US state",
+            "required": false,
+            "explode": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "Nebraska",
+                "Iowa",
+                "Illinois",
+                "Indiana",
+                "Ohio"
+              ]
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Navigate through pages",
+            "required": false,
+            "explode": false,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Number of records per page",
+            "required": false,
+            "explode": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "station_id": {
+                        "type": "string"
+                      },
+                      "station_name": {
+                        "type": "string"
+                      },
+                      "state": {
+                        "type": "string"
+                      },
+                      "date": {
+                        "type": "string"
+                      },
+                      "max_temp": {
+                        "type": "number"
+                      },
+                      "min_temp": {
+                        "type": "number"
+                      },
+                      "precipitation": {
+                        "type": "number"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/weather/stats": {
+      "get": {
+        "tags": [
+          "Summarized Records"
+        ],
+        "summary": "Get summarized weather station records by year and station ID",
+        "description": "Records can be filtered using optional parameters below. Sample values have been provided.",
+        "parameters": [
+          {
+            "name": "station_id",
+            "in": "query",
+            "description": "Try out a sample of available station IDs",
+            "required": false,
+            "explode": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "USC00110072",
+                "USC00134142",
+                "USC00258915",
+                "USC00331152",
+                "USC00332791"
+              ]
+            }
+          },
+          {
+            "name": "year",
+            "in": "query",
+            "description": "Select a year from 1985 to 2014",
+            "required": false,
+            "explode": false,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "state",
+            "in": "query",
+            "description": "Select meters from a certain US state",
+            "required": false,
+            "explode": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "Nebraska",
+                "Iowa",
+                "Illinois",
+                "Indiana",
+                "Ohio"
+              ]
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Navigate through pages",
+            "required": false,
+            "explode": false,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Number of records per page",
+            "required": false,
+            "explode": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "station_id": {
+                        "type": "string"
+                      },
+                      "state": {
+                        "type": "string"
+                      },
+                      "year": {
+                        "type": "integer"
+                      },
+                      "avg_max_temp": {
+                        "type": "number"
+                      },
+                      "avg_min_temp": {
+                        "type": "number"
+                      },
+                      "total_precip": {
+                        "type": "number"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  
+  "components": {
+    "schemas": {
+      "Raw Records": {
+        "type": "object",
+        "properties": {
+          "station_id": {
+            "type": "string",
+            "example": "USC00257715",
+            "description": "Unique ID of a weather station"
+          },
+          "station_name": {
+            "type": "string",
+            "example": "Seward",
+            "description": "Name of a weather station"
+          },
+          "state": {
+            "type": "string",
+            "example": "Nebraska",
+            "description": "Location of a weather station"
+          },
+          "date": {
+            "type": "integer",
+            "example": "19850101",
+            "description": "Date of an observation in YYYYMMDD format"
+          },
+          "max_temp": {
+            "type": "number",
+            "example": "-8.3",
+            "description": "Maximum daily temperature in degree Celsius"
+          },
+          "min_temp": {
+            "type": "number",
+            "example": "-14.4",
+            "description": "Minimum daily temperature in degree Celsius"
+          },
+          "precipitation": {
+            "type": "number",
+            "example": "3.3",
+            "description": "Total daily precipitation in centimeters"
+          }
+        },
+        "xml": {
+          "name": "raw_records"
+      }
+      },
+      "Summarized Records": {
+        "type": "object",
+        "properties": {
+          "station_id": {
+            "type": "string",
+            "example": "USC00257715",
+            "description": "Unique ID of a weather station"
+          },
+          "state": {
+            "type": "string",
+            "example": "Nebraska",
+            "description": "Location of a weather station"
+          },
+          "year": {
+            "type": "integer",
+            "example": "1985",
+            "description": "Year of the summarized weather data"
+          },
+          "avg_max_temp": {
+            "type": "number",
+            "example": "-8.3",
+            "description": "Yearly average of maximum daily temperature in degree Celsius"
+          },
+          "avg_min_temp": {
+            "type": "number",
+            "example": "-14.4",
+            "description": "Yearly average of minimum daily temperature in degree Celsius"
+          },
+          "total_precip": {
+            "type": "number",
+            "example": "3.3",
+            "description": "Total annual precipitation in centimeters"
+          }
+        },
+        "xml": {
+          "name": "summarized_records"
+      }
+      }
+    
+    }
+  }
+      
+}
