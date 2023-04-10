@@ -11,7 +11,8 @@ import io #to parse string response
 import reverse_geocoder as rg #reverse geocode to find state
 import sqlite3 #to directly connect to database (used for creating reference stations list table)
 from sqlalchemy.exc import SQLAlchemyError #to catch db errors
-
+from datetime import datetime
+import logging
 
 def create_db_connection(database_location):
     '''Function to connect to database and create tables if they do not exist'''
@@ -87,6 +88,11 @@ def update_database_table(df, db_class, session):
         print(str(e)) # change to log later
         session.rollback()
     
-
+def database_log(df, start_time, table_name):        
+    # Create log message
+    record_len = len(df)
+    end_time = datetime.now()
+    duration = (end_time - start_time).total_seconds()
+    logging.info(f'{record_len} records ingested in {table_name} in {duration:.2f}s')
 
 #add a unit test to check data type for each function

@@ -1,16 +1,17 @@
 '''
-Insert info about this script
+This script defines the data model used to store, analyze and serve weather data. 
+Schema is defined using SQLAlchemy's Base class (ORM) that maps fields to columns in database tables.
 '''
 
 # Import libraries
-from sqlalchemy import Column, Integer, Float, String, Date, Numeric, ForeignKey #only import necessary classes
-from sqlalchemy.orm import declarative_base, relationship   #to create Base class (catalog field mappings)
+from sqlalchemy import Column, Integer, Float, String, Date, ForeignKey
+from sqlalchemy.orm import declarative_base, relationship
 
 # Define Base class
 Base = declarative_base()
 
 class WeatherStation(Base):
-    '''Dimension Table - Define table structure for weather stations'''
+    '''Dimension Table - Define table structure for storing weather stations'''
 
     # Assign table name in the database
     __tablename__ = 'dim_weather_station'
@@ -29,7 +30,7 @@ class WeatherStation(Base):
         return f"{self.station_key} {self.station_id} {self.station_name} {self.state}"
 
 class RecordDate(Base):
-    '''Dimension Table - Define table structure for weather stations'''
+    '''Dimension Table - Define table structure for storing date dimension'''
 
     # Assign table name in the database
     __tablename__ = 'dim_date'
@@ -50,7 +51,7 @@ class RecordDate(Base):
         return f"{self.date_key} {self.date_id} {self.date_alternate} {self.day} {self.month} {self.year}"
 
 class WeatherData(Base):
-    '''Fact Table - Define table structure for weather data (fact table)'''
+    '''Fact Table - Define table structure for storing weather data'''
     
     # Assign table name in the database
     __tablename__ = 'fact_weather_data'
