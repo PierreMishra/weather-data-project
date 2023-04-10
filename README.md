@@ -1,6 +1,10 @@
+<!-- PROJECT LOGO -->
+
+
 # About The Project
 
-Provide brief overalll summary
+This project contains 2 main parts:
+1. Creating and executing a data pipeline
 
 ### Getting Started
 
@@ -25,7 +29,9 @@ pip3 install reverse_geocode==1.4.1
 Then:
 pip3 install -r requirements.txt
 
-To run the data pipeline:
+### Running data pipeline
+
+To run the data pipeline (runtime depends on your device, progress can be tracked using db.log file):
 On Mac/Linux:
 python3 src/run.py
 
@@ -33,13 +39,23 @@ On Windows (either one depending on your version of python):
 python3 src/run.py
 python src/run.py
 
+### Running Flask API
+
 To run the api:
 On Mac/Linux:
 python3 src/api.py
 
-On Windows (either one depending on your version of python):
+On Windows (either one depending on your python configuration):
 python3 src/api.py
 python src/api.py
+
+Once you see the server running in terminal, go to the following endpoint to see the Swagger/OpenAPI style documentation
+127.0.0.1:5000/swagger
+
+To get JSON response use the following endpoints
+127.0.0.1:5000/weather
+127.0.0.1:5000/weather/stats
+
 
 
 
