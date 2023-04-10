@@ -20,18 +20,17 @@
 
 This project contains 4 main parts:
 1. `data_model.py` - Designing a data model to represent the weather data records using SQLAlchemy ORM and SQLite3 database.
-2. `data_ingestion.py` - Processing and ingesting the weather data stored in the wx_data folder into the database.
+2. `data_ingestion.py` - Processing and ingesting the weather data stored in the `wx_data` folder into the database.
 3. `data_analysis.py` - Performing calculations on ingested weather station data
 4. `api.py` - Creating a Flask API and developing Swagger/OpenAPI documentation
 
-I also defined some supporting functions and unit tests that are provided in the following modules:
+Some other important parts of the project:
+* I also defined some supporting functions and unit tests that are provided in the following modules:
 `functions.py` `unit_tests.py`
-
-All the python modules are located inside the `src` folder.
-
-The SQLite3 database is stored in `database` folder. Due to the GitHub size limits, the `weather.db` file only contains empty data model.
-
-Data ingestion logs are stored in `db.log` file in the root folder.
+* All the python modules are located inside the `src` folder.
+* The SQLite3 database is stored in `database` folder. Due to the GitHub size limits, the `weather.db` file only contains an empty data model.
+* Data ingestion logs are stored in `db.log` file in the root folder.
+* Swagger/OpenAPI documentation is configured in `api_swagger.json`
 
 ## Getting Started
 
@@ -89,6 +88,10 @@ To run the data pipeline:
 python3 src/run.py
 ```
 NOTE: Runtime depends on your device specifications. For instance, my MacBook finished data ingestion in about 80-100 seconds but my PC took about 400 seconds. While the pipeline is being executed, we can track the progress using `db.log` file.
+
+<p align="center">
+    <img src="images/logs.png">
+</p>
 
 `run.py` executes the following modules as well:
 * `data_model.py`
