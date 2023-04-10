@@ -5,7 +5,7 @@
     <img src="images/icon.png" alt="Logo" width="80" height="80">
   </a>
 
-  <h3 align="center">Weather Data API</h3>
+  <h3 align="center">Weather Station API</h3>
 
   <p align="center">
     Building a Data Pipeline and Flask API using Python
@@ -20,7 +20,7 @@
 
 This project contains 4 main parts:
 1. Designing a data model to represent the weather data records using SQLAlchemy ORM and SQLite3 database.
-
+`data_model.py`
 2. Processing and ingesting the weather data stored in the wx_data folder into the database.
 3. Creating a Flask API and developing Swagger/OpenAPI documentation
 
