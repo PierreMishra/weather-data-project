@@ -1,5 +1,16 @@
 <!-- PROJECT LOGO -->
+<br />
+<div align="center">
+  <a>
+    <img src="images/icon.png" alt="Logo" width="80" height="80">
+  </a>
 
+  <h3 align="center">Weather Data API</h3>
+
+  <p align="center">
+    Building Data Pipeline and Flask API
+  </p>
+</div>
 
 # About The Project
 
