@@ -54,7 +54,7 @@ Windows:
 ```sh
 python -m venv venv
 ```
-NOTE: Using `python` or `python3` in Window's command prompt would depend on your python system installation.
+NOTE: Using `python` or `python3` in Window's command prompt would depend on your python installation.
 
 * #### Activate virtual environment
 
