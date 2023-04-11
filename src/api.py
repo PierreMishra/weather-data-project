@@ -76,9 +76,9 @@ class WeatherAPI(Resource):
                     'station_name': weather_station.station_name,
                     'state': weather_station.state,
                     'date': record_date.date_alternate.strftime('%Y-%m-%d'),
-                    'max_temp': f'{weather_data.max_temp} deg C',
-                    'min_temp': f'{weather_data.min_temp} deg C',
-                    'precipitation': f'{weather_data.precipitation} cm'
+                    'max_temp': weather_data.max_temp,
+                    'min_temp': weather_data.min_temp,
+                    'precipitation': weather_data.precipitation
                 })
             return jsonify(result)
 
@@ -116,9 +116,9 @@ class WeatherStatsAPI(Resource):
                     'station_id': weather_summary.station_id,
                     'state': weather_summary.state,
                     'year': weather_summary.year,
-                    'avg_max_temp': f'{weather_summary.avg_max_temp} deg C',
-                    'avg_min_temp': f'{weather_summary.avg_min_temp} deg C',
-                    'total_precip': f'{weather_summary.total_precip} cm'
+                    'avg_max_temp': weather_summary.avg_max_temp,
+                    'avg_min_temp': weather_summary.avg_min_temp,
+                    'total_precip': weather_summary.total_precip
                 })
 
             return jsonify(result)

@@ -259,9 +259,9 @@
             "description": "Location of a weather station"
           },
           "date": {
-            "type": "integer",
-            "example": "19850101",
-            "description": "Date of an observation in YYYYMMDD format"
+            "type": "string",
+            "example": "1985-01-01",
+            "description": "Date of an observation in YYYY-MM-DD format"
           },
           "max_temp": {
             "type": "number",
