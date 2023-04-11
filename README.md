@@ -75,6 +75,7 @@ Before installing pacakges from `requirements.txt`, install the following librar
 ```sh
 pip3 install reverse_geocode==1.4.1
 ```
+NOTE: Installing this pacakge from `requirements.txt` throws dependency errors. That is why we need to install it in a separate step. This package is a prerequisite to another reverse geocoding library in the `requirements.txt` file which is important to find the US state for each weather station using its latitude and longitude.
 
 Now install all the remaining python packages
 ```sh
