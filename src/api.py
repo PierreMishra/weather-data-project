@@ -66,7 +66,7 @@ class WeatherAPI(Resource):
 
             # Implement pagination
             offset = (args['page'] - 1) * args['limit'] #skip records to navigate to other pg
-            query = query.offset(offset).limit(args['limit']) 
+            query = query.offset(offset).limit(args['limit'])
 
             # Build the response - list of dictionaries for each record
             result = []
