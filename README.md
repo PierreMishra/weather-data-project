@@ -125,7 +125,7 @@ To get JSON responses from our API, use the following endpoints:
 * `127.0.0.1:5000/weather/stats` - To retrieve summarized weather records
 
 <p align="center">
-    <img src="images/api_json.png">
+    <img src="images/api_json.png" height="50%" weight=50%>
 </p>
 
 `api.py` executes the following modules as well:
