@@ -161,8 +161,7 @@ def data_ingestion():
     session.bulk_save_objects(weather_data_list)
     try:
         session.commit()
-    except SQLAlchemyError as e:
-        print(str(e)) #change to log later
+    except SQLAlchemyError as err:
         session.rollback()
 
     ## Log completion
