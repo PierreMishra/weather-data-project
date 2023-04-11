@@ -34,7 +34,7 @@ Some other important notes about this project:
 
 ## Getting Started
 
-Clone this GitHub repository to your local machine or download it as a ZIP file. Then run the following steps to execute the data pipeline locally and interact with the API.
+Clone this GitHub repository to your local machine or download it as a ZIP file. Before we run our data pipeline and REST API, we would have to point to our project root directory, set up a virtual environment, activate the environment, and install python packages necessary to run our code. In order to do so, we would have to run the following steps to execute the data pipeline locally and interact with the API.
 
 ## Prerequisites and Installations 
 
@@ -42,10 +42,10 @@ Using the terminal, set the working directory to the root folder where the procj
 ```sh
   cd /your/local/folder
 ```
+* #### Create virtual environment
 
 Based on your OS and python version installed, use one of the following to setup a virtual environment
-
-* #### Create virtual environment 
+ 
 Mac/Linux:
 ```sh
 python3 -m venv venv
@@ -57,6 +57,9 @@ python -m venv venv
 NOTE: Using `python` or `python3` in Window's command prompt would depend on your python system installation.
 
 * #### Activate virtual environment
+
+Based on your OS and python version installed, use one of the following to setup a virtual environment
+
 Mac/Linux: 
 ```sh
 source venv/bin/activate
@@ -73,11 +76,11 @@ Before installing pacakges from `requirements.txt`, install the following librar
 pip3 install reverse_geocode==1.4.1
 ```
 
-Now we are ready to install all the remaining python packages
+Now install all the remaining python packages
 ```sh
 pip3 install -r requirements.txt
 ```
-Now we are ready to run our data pipeline.
+We are ready to run our data pipeline.
 
 ## Running the code
 
@@ -116,7 +119,7 @@ We can use the `Try it out` feature of the Swagger documentation to test our API
     <img src="images/api_swagger1.png">
 </p>
 
-To get JSON responses from our API, use the following endpoints
+To get JSON responses from our API, use the following endpoints:
 * `127.0.0.1:5000/weather` - To retrieve daily weather records
 * `127.0.0.1:5000/weather/stats` - To retrieve summarized weather records
 
@@ -125,7 +128,7 @@ To get JSON responses from our API, use the following endpoints
 * `data_model.py`
 * `unit_test.py`
 
-It also uses the `api_swagger.json` to construct the Swagger/OpenAPI documentation.
+It also uses `api_swagger.json` to construct the Swagger/OpenAPI documentation.
 
 ### Database Design
 
@@ -152,5 +155,3 @@ If you have any questions or thoughts about this project, feel free to reach out
 Many thanks to Othneil Drew for creating this beautiful README template
 
 * [README Template](https://github.com/othneildrew/Best-README-Template)
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
